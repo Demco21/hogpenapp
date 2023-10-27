@@ -13,6 +13,7 @@ const MONGO_URI = process.env.MONGO_URI;
 const userRoutes = require("./routes/userRoutes");
 const chatRoutes = require("./routes/chatRoutes");
 const messageRoutes = require("./routes/messageRoutes");
+const betRoutes = require("./routes/betRoutes");
 
 const connectDb = async() => {
     try{
@@ -30,6 +31,7 @@ app.get("/", (req, res)=>{
 app.use("/user", userRoutes);
 app.use("/chat", chatRoutes);
 app.use("/message", messageRoutes);
+app.use("/bets", betRoutes);
 
 
 app.listen(PORT, console.log("Server is running on port ", PORT));

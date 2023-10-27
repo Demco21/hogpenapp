@@ -1,12 +1,14 @@
 import './myStyles.css';
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import DoneOutlineRoundedIcon from "@mui/icons-material/DoneOutlineRounded";
 import { IconButton } from '@mui/material';
 import logo from "../Images/hoghunter.png"
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import axios from "axios";
 
 function CreateGroups() {
+    const userData = JSON.parse(localStorage.getItem("userData"));
     const [betSlip, setBetSlip] = useState([{
         subject: "",
         subjectName:"",
@@ -76,6 +78,26 @@ function CreateGroups() {
         updatedBetSlip[index][e.target.id] = e.target.value;
         setBetSlip(updatedBetSlip);
     };
+    const placeBet = () => {
+        console.log("placeBet Fired");
+        const config = {
+          headers: {
+            Authorization: `Bearer ${userData.data.token}`,
+          },
+        };
+        const myBets = [];
+        myBets[0] = betSlip[0].subjectName + betSlip[0].selectedBetOption1;
+        axios.post("http://localhost:8080/bets",
+            {
+              title: "Test",
+              bets: myBets
+            },
+            config
+          )
+          .then(({ data }) => {
+            console.log("Message Fired");
+          });
+      };
     return (
         <div className="list-container">
             <div className="ug-header">
@@ -235,8 +257,10 @@ function CreateGroups() {
                 </div>
             </div>
             <div className="finalize-box">
-                <Button className="finalize-button" variant="contained">
-                    FINALIZE BET
+                <Button className="finalize-button" variant="contained"
+                    onClick={()=>placeBet()}
+                >
+                    It's a lock
                 </Button>
             </div>
         </div>
