@@ -23,7 +23,6 @@ function Sidebar() {
     const lightTheme = useSelector((state) => state.themeKey);
     // const refresh = useSelector((state) => state.refreshKey);
     const { refresh, setRefresh } = useContext(myContext);
-    console.log("Context API : refresh : ", refresh);
     const [conversations, setConversations] = useState([]);
     // console.log("Conversations of Sidebar : ", conversations);
     const userData = JSON.parse(localStorage.getItem("userData"));
@@ -32,8 +31,6 @@ function Sidebar() {
     if (!userData) {
       console.log("User not Authenticated");
       nav("/");
-    }else{
-      console.log("User Data::", userData);
     }
   
     const user = userData.data;

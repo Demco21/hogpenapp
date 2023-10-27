@@ -6,8 +6,10 @@ import logo from "../Images/hoghunter.png"
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 function CreateGroups() {
+    const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem("userData"));
     const [betSlip, setBetSlip] = useState([{
         subject: "",
@@ -18,6 +20,8 @@ function CreateGroups() {
         selectedSpreadValue: "",
         betSlipValidated: true
     }]);
+    const [wager, setWager] = useState(0);
+    const [payout, setPayout] = useState(0);
     const subjectOptions = ["", "Team", "Player"];
     const teamBetOptions = ["", "Moneyline", "Spread"];
     const playerBetOptions = [
@@ -38,7 +42,6 @@ function CreateGroups() {
     const spreadOpts = ["","1","2","3","4","5","6","7","8","9","10","11","12","13","14", "15","16","17","18","19","20"];
 
     const handleAdd=()=>{
-        console.log(betSlip[0]);
         if(betSlip.every(bet => bet.betSlipValidated)){
             const newBetSlip = [...betSlip,
             {
@@ -54,9 +57,8 @@ function CreateGroups() {
             setBetSlip(newBetSlip);
         }
     };
+
     const updateBetSlip=(index, e)=>{
-        console.log("id:",e.target.id);
-        console.log("value:",e.target.value);
         const updatedBetSlip = [...betSlip];
         if(e.target.id==="subject"){
             updatedBetSlip[index] = {...updatedBetSlip[index], 
@@ -78,26 +80,40 @@ function CreateGroups() {
         updatedBetSlip[index][e.target.id] = e.target.value;
         setBetSlip(updatedBetSlip);
     };
-    const placeBet = () => {
-        console.log("placeBet Fired");
+
+    const placeBet = async () => {
         const config = {
           headers: {
             Authorization: `Bearer ${userData.data.token}`,
           },
         };
         const myBets = [];
-        myBets[0] = betSlip[0].subjectName + betSlip[0].selectedBetOption1;
-        axios.post("http://localhost:8080/bets",
+        {betSlip.map((bet, i)=>{
+            var betStr = bet.subjectName + " " + bet.selectedBetOption1;
+            if(bet.selectedBetOption2)
+                betStr = betStr + " " + bet.selectedBetOption2;
+            if(bet.selectedSpreadSign)
+                betStr = betStr + " " + bet.selectedSpreadSign;
+            if(bet.selectedSpreadValue)
+                betStr = betStr + " " + bet.selectedSpreadValue;
+            myBets[i] = betStr;
+        })};
+        await axios.post("http://localhost:8080/bets",
             {
-              title: "Test",
-              bets: myBets
+              title: "",
+              bets: myBets,
+              wager: wager,
+              payout: payout,
+              isWin: false
             },
             config
           )
           .then(({ data }) => {
             console.log("Message Fired");
           });
-      };
+        navigate('/app/bets');
+    };
+
     return (
         <div className="list-container">
             <div className="ug-header">
@@ -105,6 +121,20 @@ function CreateGroups() {
                 <p className="ug-title">Create a Bet</p>
             </div>
             <div className="messages-container">
+                <div className="bet-title">
+                Wager:
+                    <input className="search-box"
+                        id="wager"
+                        placeholder={"$0.00"}
+                        onChange={(e)=>setWager(e.target.value)}
+                    />
+                Payout:
+                    <input className="search-box"
+                        id="payout"
+                        placeholder={"$0.00"}
+                        onChange={(e)=>setPayout(e.target.value)}
+                    />
+                </div>
 
                 {betSlip.map((bet, i)=>{
                     return(

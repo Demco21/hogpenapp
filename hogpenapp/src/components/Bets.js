@@ -1,17 +1,7 @@
 import './myStyles.css';
-import React, { useContext, useEffect, useRef, useState } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { IconButton } from "@mui/material";
-import SendIcon from "@mui/icons-material/Send";
-import MessageSelf from "./MessageSelf";
-import MessageOthers from "./MessageOthers";
-import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import Skeleton from "@mui/material/Skeleton";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { myContext } from "./MainContainer";
 import logo from "../Images/hoghunter.png"
-import DoneOutlineRoundedIcon from "@mui/icons-material/DoneOutlineRounded";
 
 function Bets() {
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -19,14 +9,12 @@ function Bets() {
   const [bets, setBets] = useState([]);
 
   useEffect(() => {
-    console.log("User***:",userData.data._id);
     const config = {
         headers: {
             Authorization: `Bearer ${userData.data.token}`
         }
     };
     axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
-        console.log("Bets***:",data.data[0].user);
         setBets(data.data);
     });
   }, [refresh]);
@@ -39,24 +27,34 @@ function Bets() {
       </div>
       <div className="messages-container">
         {bets.map((bet, i)=>{
-          if(bet.user === userData.data._id){
+          if(bet.user._id === userData.data._id){
             return(
               <div className="MessageSelf" key={i}>
-                <p className="convo-icon">C</p>
                 <div className="selfMessageBox">
-                  <p className="convo-title">{bet.title}</p>
-                  <p className="convo-lastMessage">{bet.bets[0]}</p>
+                  <p className="bet-title">{bet.user.name}</p>
+                  {bet.bets.map((bet, i)=>{
+                    return(
+                      <p key={i} className="bet-text">{bet}</p>
+                    )
+                  })}
+                  <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
                   <p className="self-timestamp">12:00am</p>
                 </div>
+                <p className="convo-icon-self">{bet.user.name[0]}</p>
               </div>
             )
           }else{
             return(
               <div className="othersMessageBox" key={i}>
-                <p className="convo-icon">C</p>
+                <p className="convo-icon">{bet.user.name[0]}</p>
                 <div className="other-text-content">
-                    <p className="convo-title">{bet.title}</p>
-                    <p className="convo-lastMessage">{bet.bets[0]}</p>
+                    <p className="bet-title">{bet.user.name}</p>
+                    {bet.bets.map((bet, i)=>{
+                      return(
+                        <p key={i} className="bet-text">{bet}</p>
+                      )
+                    })}
+                    <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
                     <p className="self-timestamp">12:00am</p>
                 </div>
               </div>
