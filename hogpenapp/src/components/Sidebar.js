@@ -54,9 +54,9 @@ function Sidebar() {
         <div className="sidebar-header">
             <div className="bet-title">
                 <IconButton
-                    onClick={()=>{
-                        navigate("welcome");
-                    }}
+                  onClick={()=>{
+                    navigate("bets?user="+userData.data._id+"&"+"name="+userData.data.name);
+                  }}
                 >
                     <AccountCircleIcon/>
                 </IconButton>
@@ -153,13 +153,8 @@ function Sidebar() {
               <div
                 key={index}
                 className="ConversationsItem"
-                onClick={() => {
-                  navigate(
-                    "chat/" +
-                      conversation._id +
-                      "&" +
-                      conversation.users[1].name
-                  );
+                onClick={()=>{
+                  navigate("bets?user="+conversation.users[1]._id+"&"+"name="+conversation.users[1].name);
                 }}
               >
                 <p className={"convo-icon" + (lightTheme ? "" : " dark")}>

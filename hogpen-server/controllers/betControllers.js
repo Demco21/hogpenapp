@@ -32,8 +32,8 @@ const placeBet = expressAsyncHandler(async (req, res) => {
     const keywork = req.query.search
         ? {
             $or: [
-                {name: {$regex: req.query.search, $options: "i"}},
-                {email: {$regex: req.query.search, $options: "i"}}
+              {name: {$regex: req.query.search, $options: "i"}},
+              {email: {$regex: req.query.search, $options: "i"}}
             ]
         }
         : {};
@@ -42,6 +42,12 @@ const placeBet = expressAsyncHandler(async (req, res) => {
         _id: {$ne: req.user._id}
     }).populate("user", "-password");
     res.send(bets);
-});
+  });
+
+  const fetchBetsById = expressAsyncHandler (async (req, res) => {
+    const bets = await Bet.find({ user: req.params.userId })
+    .populate("user", "-password");
+    res.send(bets);
+  });
   
-  module.exports = { placeBet, fetchAllBets };
+  module.exports = { placeBet, fetchAllBets, fetchBetsById };

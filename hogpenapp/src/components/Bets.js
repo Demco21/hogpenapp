@@ -2,28 +2,47 @@ import './myStyles.css';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import logo from "../Images/hoghunter.png"
+import { useSearchParams, useLocation } from "react-router-dom";
 
 function Bets() {
+  const [searchParams, setSearchParams] = useSearchParams({});
   const userData = JSON.parse(localStorage.getItem("userData"));
   const [refresh, setRefresh] = useState(true);
+  const { search } = useLocation();
   const [bets, setBets] = useState([]);
+  const [dashboardTitle, setDashboardTitle] = useState();
 
   useEffect(() => {
-    const config = {
+    console.log("change!");
+    if(searchParams.get("user")){
+      setDashboardTitle(searchParams.get("name"));
+      console.log(searchParams.get("user"));
+      const config = {
         headers: {
             Authorization: `Bearer ${userData.data.token}`
         }
-    };
-    axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
-        setBets(data.data);
-    });
-  }, [refresh]);
+      };
+      axios.get("http://localhost:8080/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
+          setBets(data.data);
+      });
+    }else{
+      setDashboardTitle("Betting Dashboard");
+      const config = {
+          headers: {
+              Authorization: `Bearer ${userData.data.token}`
+          }
+      };
+      axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
+          setBets(data.data);
+      });
+    }
+  }, [search]);
 
   return (
     <div className="list-container">
       <div className="ug-header">
           <img src={logo} style={{height:"2rem", width:"2rem"}} alt="logo"/>
-      <p className="ug-title">Betting Dashboard</p>
+      <p className="ug-title">{dashboardTitle}</p>
       </div>
       <div className="messages-container">
         {bets.map((bet, i)=>{
