@@ -5,6 +5,7 @@ import { IconButton } from '@mui/material';
 import logo from "../Images/hoghunter.png"
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
+import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
@@ -18,7 +19,7 @@ function CreateGroups() {
         selectedBetOption2: "",
         selectedSpreadSign: "",
         selectedSpreadValue: "",
-        betSlipValidated: true
+        betSlipValidated: false
     }]);
     const [wager, setWager] = useState(0);
     const [payout, setPayout] = useState(0);
@@ -34,12 +35,12 @@ function CreateGroups() {
         "Rush Yards",
         "Receptions"
     ];
-    const tdScorerOpts1 = ["","First","Anytime","1","2","3","4","5"];
-    const tdScorerOpts2 = ["","Anytime","1","2","3","4","5"];
-    const receptionOpts = ["","First","1","2","3","4","5","6","7","8","9","10","11","12","13","14", "15","16","17","18","19","20"];
-    const yardOpts = ["","1","2","3","4","5","6","7","8","9","10","11","12","13","14", "15","16","17","18","19","20"];
+    const tdScorerOpts1 = ["","First","Anytime",...Array(11).keys()];
+    const tdScorerOpts2 = ["","Anytime",...Array(11).keys()];
+    const receptionOpts = ["","First",...Array(26).keys()];
+    const yardOpts = ["", ...Array(601).keys()];
     const spreadSignOpts = ["","+","-"];
-    const spreadOpts = ["","1","2","3","4","5","6","7","8","9","10","11","12","13","14", "15","16","17","18","19","20"];
+    const spreadOpts = ["", ...Array(101).keys()];
 
     const handleAdd=()=>{
         if(betSlip.every(bet => bet.betSlipValidated)){
@@ -51,11 +52,17 @@ function CreateGroups() {
                 selectedBetOption2: "",
                 selectedSpreadSign: "",
                 selectedSpreadValue: "",
-                betSlipValidated: true
+                betSlipValidated: false
             }
             ];
             setBetSlip(newBetSlip);
         }
+    };
+
+    const handleDelete=(i)=>{
+        const newBetSlip = [...betSlip];
+        newBetSlip.splice(i, 1);
+        setBetSlip(newBetSlip);
     };
 
     const updateBetSlip=(index, e)=>{
@@ -78,40 +85,63 @@ function CreateGroups() {
                 }
         }
         updatedBetSlip[index][e.target.id] = e.target.value;
+        updatedBetSlip[index].betSlipValidated = isValidated(updatedBetSlip[index]);
         setBetSlip(updatedBetSlip);
     };
 
+    const isValidated=(bet)=>{
+        if(bet.subject==="Team" && bet.subjectName){
+            if(bet.selectedBetOption1==="Moneyline"){
+                return true;
+            }
+            if(bet.selectedBetOption1==="Spread" 
+            && bet.selectedSpreadSign 
+            && bet.selectedSpreadValue){
+                return true;
+            }
+        }
+        if(bet.subject==="Player" 
+        && bet.subjectName
+        && bet.selectedBetOption1
+        && bet.selectedBetOption2){
+            return true;
+        }
+        return false;
+    }
+
     const placeBet = async () => {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${userData.data.token}`,
-          },
-        };
-        const myBets = [];
-        {betSlip.map((bet, i)=>{
-            var betStr = bet.subjectName + " " + bet.selectedBetOption1;
-            if(bet.selectedBetOption2)
-                betStr = betStr + " " + bet.selectedBetOption2;
-            if(bet.selectedSpreadSign)
-                betStr = betStr + " " + bet.selectedSpreadSign;
-            if(bet.selectedSpreadValue)
-                betStr = betStr + " " + bet.selectedSpreadValue;
-            myBets[i] = betStr;
-        })};
-        await axios.post("http://localhost:8080/bets",
-            {
-              title: "",
-              bets: myBets,
-              wager: wager,
-              payout: payout,
-              isWin: false
+        if(betSlip.every(bet => bet.betSlipValidated) && wager && payout){
+            const config = {
+            headers: {
+                Authorization: `Bearer ${userData.data.token}`,
             },
-            config
-          )
-          .then(({ data }) => {
-            console.log("Message Fired");
-          });
-        navigate('/app/bets');
+            };
+            const myBets = [];
+            {betSlip.map((bet, i)=>{
+                var betStr = bet.subjectName + " " + bet.selectedBetOption1;
+                if(bet.selectedBetOption2)
+                    betStr = betStr + " " + bet.selectedBetOption2;
+                if(bet.selectedSpreadSign)
+                    betStr = betStr + " " + bet.selectedSpreadSign;
+                if(bet.selectedSpreadValue)
+                    betStr = betStr + " " + bet.selectedSpreadValue;
+                myBets[i] = betStr;
+            })};
+            await axios.post("http://localhost:8080/bets",
+                {
+                title: "",
+                bets: myBets,
+                wager: wager,
+                payout: payout,
+                isWin: false
+                },
+                config
+            )
+            .then(({ data }) => {
+                console.log("Message Fired");
+            });
+            navigate('/app/bets');
+        }
     };
 
     return (
@@ -274,16 +304,22 @@ function CreateGroups() {
                                 <DoneOutlineRoundedIcon/>
                             //</div></IconButton>
                             }
+                            {i > 0 &&
+                            <IconButton
+                                onClick={()=>handleDelete(i)}
+                            >
+                                <DeleteIcon/>
+                            </IconButton>}
                         </div>
                     )
                 })}
 
                 <div>
-                <IconButton
-                    onClick={()=>handleAdd()}
-                >
-                    <AddCircleIcon/>
-                </IconButton>
+                    <IconButton
+                        onClick={()=>handleAdd()}
+                    >
+                        <AddCircleIcon/>
+                    </IconButton>
                 </div>
             </div>
             <div className="finalize-box">

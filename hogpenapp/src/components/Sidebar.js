@@ -52,15 +52,15 @@ function Sidebar() {
   return (
     <div className="Sidebar">
         <div className="sidebar-header">
-            <div>
+            <div className="bet-title">
                 <IconButton
                     onClick={()=>{
                         navigate("welcome");
                     }}
                 >
                     <AccountCircleIcon/>
-                    {userData.data.name}
                 </IconButton>
+                {userData.data.name}
             </div>
 
             <div>
