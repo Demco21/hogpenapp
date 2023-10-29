@@ -1,22 +1,18 @@
 import './myStyles.css';
 import React, {useEffect, useState} from "react";
 import logo from "../Images/hoghunter.png"
-import { Icon, IconButton } from '@mui/material';
+import { IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { useDispatch,useSelector } from 'react-redux';
 import {AnimatePresence, motion} from "framer-motion";
-import { refreshSidebarFun } from "../features/refreshSidebar";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 function Users() {
     const [refresh, setRefresh] = useState(true);
-    const lightTheme = useSelector((state) => state.themeKey);
     const [users, setUsers] = useState([]);
     const userData = JSON.parse(localStorage.getItem("userData"));
     const nav = useNavigate();
-    const dispatch = useDispatch();
     if(!userData){
         console.log("User not authenticated");
         nav("/");
@@ -32,7 +28,7 @@ function Users() {
             console.log("User data from API");
             setUsers(data.data);
         });
-    }, [refresh]);
+    }, [refresh, userData.data.token]);
 
     return (
         <AnimatePresence>

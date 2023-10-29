@@ -117,7 +117,7 @@ function CreateBet() {
             },
             };
             const myBets = [];
-            {betSlip.map((bet, i)=>{
+            betSlip.forEach((bet, i)=>{
                 var betStr = bet.subjectName + " " + bet.selectedBetOption1;
                 if(bet.selectedBetOption2)
                     betStr = betStr + " " + bet.selectedBetOption2;
@@ -126,7 +126,7 @@ function CreateBet() {
                 if(bet.selectedSpreadValue)
                     betStr = betStr + " " + bet.selectedSpreadValue;
                 myBets[i] = betStr;
-            })};
+            });
             await axios.post("http://localhost:8080/bets",
                 {
                 title: "",

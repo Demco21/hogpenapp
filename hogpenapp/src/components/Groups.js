@@ -3,7 +3,6 @@ import React from "react";
 import logo from "../Images/hoghunter.png"
 import { IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import { useSelector } from 'react-redux';
 
 function Groups() {
   return (

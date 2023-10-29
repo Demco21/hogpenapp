@@ -2,7 +2,6 @@ import './myStyles.css';
 import React, { useContext, useEffect, useState } from "react";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from '@mui/material';
@@ -13,7 +12,7 @@ import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 
 function Sidebar() {
     const navigate = useNavigate();
-    const { refresh, setRefresh } = useContext(myContext);
+    const { refresh } = useContext(myContext);
     const [friendsList, setFriendsList] = useState([]);
     const userData = JSON.parse(localStorage.getItem("userData"));
 
@@ -35,7 +34,7 @@ function Sidebar() {
         console.log("Data refresh in sidebar ", response.data);
         setFriendsList(response.data);
       });
-    }, [refresh]);
+    }, [refresh, user.token]);
     
   return (
     <div className="Sidebar">
@@ -43,7 +42,7 @@ function Sidebar() {
             <div className="bet-title">
                 <IconButton
                   onClick={()=>{
-                    navigate("bets?user="+userData.data._id+"&"+"name="+userData.data.name);
+                    navigate("bets?user="+userData.data._id+"&name="+userData.data.name);
                   }}
                 >
                     <AccountCircleIcon/>
@@ -95,7 +94,7 @@ function Sidebar() {
                 key={index}
                 className="ConversationsItem"
                 onClick={()=>{
-                  navigate("bets?user="+friend._id+"&"+"name="+friend.name);
+                  navigate("bets?user="+friend._id+"&name="+friend.name);
                 }}
               >
                 <p className="convo-icon">
