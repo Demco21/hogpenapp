@@ -11,6 +11,8 @@ function Bets() {
   const { search } = useLocation();
   const [bets, setBets] = useState([]);
   const [dashboardTitle, setDashboardTitle] = useState();
+  var dateOptions = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  var timeOptions = { hour12: true, hour: 'numeric', minute:'2-digit' };
 
   useEffect(() => {
     console.log("change!");
@@ -19,21 +21,22 @@ function Bets() {
       console.log(searchParams.get("user"));
       const config = {
         headers: {
-            Authorization: `Bearer ${userData.data.token}`
+          Authorization: `Bearer ${userData.data.token}`
         }
       };
       axios.get("http://localhost:8080/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
-          setBets(data.data);
+        setBets(data.data);
       });
     }else{
       setDashboardTitle("Betting Dashboard");
       const config = {
-          headers: {
-              Authorization: `Bearer ${userData.data.token}`
-          }
+        headers: {
+            Authorization: `Bearer ${userData.data.token}`
+        }
       };
       axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
-          setBets(data.data);
+        console.log(data.data)
+        setBets(data.data);
       });
     }
   }, [search]);
@@ -46,6 +49,8 @@ function Bets() {
       </div>
       <div className="messages-container">
         {bets.map((bet, i)=>{
+          var date = new Date(bet.createdAt).toLocaleString("en-US", dateOptions);
+          var time = new Date(bet.createdAt).toLocaleString("en-US", timeOptions);
           if(bet.user._id === userData.data._id){
             return(
               <div className="MessageSelf" key={i}>
@@ -57,7 +62,7 @@ function Bets() {
                     )
                   })}
                   <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
-                  <p className="self-timestamp">12:00am</p>
+                  <p className="self-timestamp">{date} {time}</p>
                 </div>
                 <p className="convo-icon-self">{bet.user.name[0]}</p>
               </div>
@@ -74,7 +79,7 @@ function Bets() {
                       )
                     })}
                     <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
-                    <p className="self-timestamp">12:00am</p>
+                    <p className="self-timestamp">{date} {time}</p>
                 </div>
               </div>
             )

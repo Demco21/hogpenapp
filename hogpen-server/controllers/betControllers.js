@@ -16,7 +16,8 @@ const placeBet = expressAsyncHandler(async (req, res) => {
       bets: bets,
       wager: wager,
       payout: payout,
-      isWin: isWin
+      isWin: isWin,
+      createdAt: Date.now()
     };
   
     try {
@@ -29,18 +30,7 @@ const placeBet = expressAsyncHandler(async (req, res) => {
   });
 
   const fetchAllBets = expressAsyncHandler (async (req, res) => {
-    const keywork = req.query.search
-        ? {
-            $or: [
-              {name: {$regex: req.query.search, $options: "i"}},
-              {email: {$regex: req.query.search, $options: "i"}}
-            ]
-        }
-        : {};
-
-    const bets = await Bet.find(keywork).find({
-        _id: {$ne: req.user._id}
-    }).populate("user", "-password");
+    const bets = await Bet.find().populate("user", "-password");
     res.send(bets);
   });
 
