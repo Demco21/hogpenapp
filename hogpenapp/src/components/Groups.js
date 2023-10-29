@@ -6,10 +6,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useSelector } from 'react-redux';
 
 function Groups() {
-    const lightTheme = useSelector((state) => state.themeKey);
   return (
     <div className="list-container">
-    <div className={"ug-header" + (lightTheme ? "" : " dark")}>
+    <div className="ug-header">
         <img src={logo} style={{height:"2rem", width:"2rem"}} alt="logo"/>
         <p className="ug-title">Groups</p>
     </div>

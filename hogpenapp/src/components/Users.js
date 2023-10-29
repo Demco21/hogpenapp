@@ -71,22 +71,6 @@ function Users() {
                                     whileTap={{scale: 0.98}}
                                     className="list-item"
                                     key={index}
-                                    onClick={() => {
-                                        console.log("Creating chat with ", user.name);
-                                        const config = {
-                                          headers: {
-                                            Authorization: `Bearer ${userData.data.token}`
-                                          }
-                                        };
-                                        axios.post(
-                                          "http://localhost:8080/chat/",
-                                          {
-                                            userId: user._id,
-                                          },
-                                          config
-                                        );
-                                        dispatch(refreshSidebarFun());
-                                    }}
                                 >
                                     <p className="convo-icon">{user.name[0].toUpperCase()}</p>
                                     <p className="convo-title">

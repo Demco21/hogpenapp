@@ -3,10 +3,9 @@ import './App.css';
 import Login from './components/Login';
 import MainContainer from './components/MainContainer';
 import Welcome from './components/Welcome';
-import ChatArea from './components/ChatArea';
 import Users from './components/Users';
 import Groups from './components/Groups';
-import CreateGroups from './components/CreateGroups';
+import CreateBet from './components/CreateBet';
 import Bets from './components/Bets';
 
 function App() {
@@ -16,10 +15,9 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="app" element={<MainContainer/>}>
           <Route path="welcome" element={<Welcome/>}></Route>
-          <Route path="chat/:_id" element={<ChatArea/>}></Route>
           <Route path="users" element={<Users/>}></Route>
           <Route path="groups" element={<Groups/>}></Route>
-          <Route path="create-groups" element={<CreateGroups/>}></Route>
+          <Route path="create-bet" element={<CreateBet/>}></Route>
           <Route path="bets" element={<Bets/>}></Route>
         </Route>
       </Routes>

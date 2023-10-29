@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Toaster from "./Toaster"
 
 function Login() {
-    const [showlogin, setShowLogin] = useState(false);
+    const [showlogin, setShowLogin] = useState(true);
     const [data, setData] = useState({name: "", email: "", password: ""});
     const [loading, setLoading] = useState(false);
 
@@ -192,14 +192,14 @@ function Login() {
                     Sign Up
                 </Button>
                 <p>
-                    Already have an account ?
+                    Already have an account? 
                     <span
                         className="hyper"
                         onClick={() => {
                             setShowLogin(true);
                         }}
                     >
-                        Log In
+                        Log in
                     </span>
                 </p>
                 {signInStatus ? (

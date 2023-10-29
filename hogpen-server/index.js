@@ -11,8 +11,6 @@ const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
 const userRoutes = require("./routes/userRoutes");
-const chatRoutes = require("./routes/chatRoutes");
-const messageRoutes = require("./routes/messageRoutes");
 const betRoutes = require("./routes/betRoutes");
 
 const connectDb = async() => {
@@ -29,8 +27,6 @@ app.get("/", (req, res)=>{
     res.send("API is running");
 });
 app.use("/user", userRoutes);
-app.use("/chat", chatRoutes);
-app.use("/message", messageRoutes);
 app.use("/bets", betRoutes);
 
 

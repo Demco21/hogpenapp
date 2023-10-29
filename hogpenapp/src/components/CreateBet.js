@@ -9,7 +9,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
-function CreateGroups() {
+function CreateBet() {
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem("userData"));
     const [betSlip, setBetSlip] = useState([{
@@ -333,4 +333,4 @@ function CreateGroups() {
     );
 } 
 
-export default CreateGroups;
+export default CreateBet;
