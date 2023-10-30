@@ -2,7 +2,6 @@ import './myStyles.css';
 import React, { useState } from "react";
 import DoneOutlineRoundedIcon from "@mui/icons-material/DoneOutlineRounded";
 import { IconButton } from '@mui/material';
-import logo from "../Images/hoghunter.png"
 import Button from '@mui/material/Button';
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -147,7 +146,6 @@ function CreateBet() {
     return (
         <div className="list-container">
             <div className="ug-header">
-                <img src={logo} style={{height:"2rem", width:"2rem"}} alt="logo"/>
                 <p className="ug-title">Create a Bet</p>
             </div>
             <div className="messages-container">

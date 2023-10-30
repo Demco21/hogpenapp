@@ -1,6 +1,5 @@
 import './myStyles.css';
 import React from "react";
-import logo from "../Images/hoghunter.png"
 import { IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
@@ -8,7 +7,6 @@ function Groups() {
   return (
     <div className="list-container">
     <div className="ug-header">
-        <img src={logo} style={{height:"2rem", width:"2rem"}} alt="logo"/>
         <p className="ug-title">Groups</p>
     </div>
     <div className="sidebar-search">
