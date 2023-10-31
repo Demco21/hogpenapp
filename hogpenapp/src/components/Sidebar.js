@@ -1,14 +1,14 @@
 import './myStyles.css';
 import React, { useContext, useEffect, useState } from "react";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
+//import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+//import AddCircleIcon from '@mui/icons-material/AddCircle';
 //import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import SearchIcon from '@mui/icons-material/Search';
+//import SearchIcon from '@mui/icons-material/Search';
 import { IconButton } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { myContext } from "./MainContainer";
-import SportsFootballIcon from '@mui/icons-material/SportsFootball';
+//import SportsFootballIcon from '@mui/icons-material/SportsFootball';
 import MenuIcon from '@mui/icons-material/Menu';
 import logo from "../Images/hoghunter.png"
 
@@ -18,26 +18,29 @@ function Sidebar() {
     const [dropdown, setDropdown] = useState(false);
     const [friendsList, setFriendsList] = useState([]);
     const userData = JSON.parse(localStorage.getItem("userData"));
+    const token = userData ? userData.data.token : null;
 
-    const nav = useNavigate();
-    if (!userData) {
-      console.log("User not Authenticated");
-      nav("/");
-    }
-  
-    const user = userData.data;
     useEffect(() => {
+      if (token === null) {
+        navigate("/");
+        return;
+      }
+
       const config = {
         headers: {
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
   
       axios.get("http://localhost:8080/user/fetchUsers", config).then((response) => {
-        console.log("Data refresh in sidebar ", response.data);
         setFriendsList(response.data);
       });
-    }, [refresh, user.token]);
+    }, [refresh, navigate, token]);
+
+    const logOut=(() => {
+      localStorage.clear();
+      navigate("/");
+    });
     
   return (
     <div className="Sidebar">
@@ -77,20 +80,18 @@ function Sidebar() {
           >
             Create a Bet
           </span>
-          <span className="dropdown-option">
+          {/* <span className="dropdown-option">
             Profile
-          </span>
-          <span className="dropdown-option">
+          </span> */}
+          <span className="dropdown-option"
+            onClick={()=>{
+              logOut()
+            }}
+          >
             Log Out
           </span>
         </div>}
 
-        <div className="sidebar-search">
-            <IconButton>
-                <SearchIcon/>
-            </IconButton>
-            <input className="search-box" placeholder="search"/>
-        </div>
         <div className="sidebar-conversations">
         {friendsList.map((friend, index) => {
             return (

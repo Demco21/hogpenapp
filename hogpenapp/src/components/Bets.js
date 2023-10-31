@@ -1,11 +1,13 @@
 import './myStyles.css';
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 
 function Bets() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams({});
   const userData = JSON.parse(localStorage.getItem("userData"));
+  const token = userData ? userData.data.token : null;
   //const [refresh, setRefresh] = useState(true);
   const { search } = useLocation();
   const [bets, setBets] = useState([]);
@@ -14,12 +16,16 @@ function Bets() {
   var timeOptions = { hour12: true, hour: 'numeric', minute:'2-digit' };
 
   useEffect(() => {
+    if(token === null){
+      navigate("/");
+      return;
+    }
     setBets(null);
     if(searchParams.get("user")){
       setDashboardTitle(searchParams.get("name")+" Betting History");
       const config = {
         headers: {
-          Authorization: `Bearer ${userData.data.token}`
+          Authorization: `Bearer ${token}`
         }
       };
       axios.get("http://localhost:8080/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
@@ -29,14 +35,14 @@ function Bets() {
       setDashboardTitle("Betting Dashboard");
       const config = {
         headers: {
-            Authorization: `Bearer ${userData.data.token}`
+            Authorization: `Bearer ${token}`
         }
       };
       axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
         setBets(data.data);
       });
     }
-  }, [search, searchParams, userData.data.token]);
+  }, [search, token, searchParams, navigate]);
 
   return (
       <div className="list-container">
@@ -59,7 +65,7 @@ function Bets() {
                       )
                     })}
                     <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
-                    <p className="self-timestamp">{date} {time}</p>
+                    <p className="self-timestamp">Placed {date} {time}</p>
                   </div>
                   <p className="convo-icon-self">{bet.user.name[0]}</p>
                 </div>
@@ -76,7 +82,7 @@ function Bets() {
                         )
                       })}
                       <p className="bet-title">Bet ${bet.wager} to win ${bet.payout}</p>
-                      <p className="self-timestamp">{date} {time}</p>
+                      <p className="self-timestamp">Placed {date} {time}</p>
                   </div>
                 </div>
               )

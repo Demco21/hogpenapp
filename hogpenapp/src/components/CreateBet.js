@@ -1,5 +1,5 @@
 import './myStyles.css';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DoneOutlineRoundedIcon from "@mui/icons-material/DoneOutlineRounded";
 import { IconButton } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -11,41 +11,70 @@ import { useNavigate } from 'react-router-dom';
 function CreateBet() {
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem("userData"));
+    const token = userData ? userData.data.token : null;
     const [betSlip, setBetSlip] = useState([{
-        subject: "",
+        subject: "Team",
         subjectName:"",
         selectedBetOption1: "",
         selectedBetOption2: "",
-        selectedSpreadSign: "",
-        selectedSpreadValue: "",
+        selectedBetOption3: "",
         betSlipValidated: false
     }]);
     const [wager, setWager] = useState(0);
     const [payout, setPayout] = useState(0);
-    const subjectOptions = ["", "Team", "Player"];
-    const teamBetOptions = ["", "Moneyline", "Spread"];
+    const subjectOptions = ["Team", "Player"];
+    const teamBetOptions = ["", "Moneyline", "Spread", "Over", "Under"];
     const playerBetOptions = [
         "",
+        "Over",
+        "Under",
         "TD Scorer",
         "Rec TD Scorer",
         "Pass TD Scorer",
-        "Rec Yards",
-        "Pass Yards",
-        "Rush Yards",
+        "Rec Yds",
+        "Pass Yds",
+        "Rush Yds",
         "Receptions"
     ];
-    const tdScorerOpts1 = ["","First","Anytime",...Array(11).keys()];
-    const tdScorerOpts2 = ["","Anytime",...Array(11).keys()];
-    const receptionOpts = ["","First",...Array(26).keys()];
-    const yardOpts = ["", ...Array(601).keys()];
+    const playerOverUnderOpts = [
+        "",
+        "Rec Yds",
+        "Pass Yds",
+        "Rush Yds",
+        "TDs" 
+    ];
+    const gameOverUnderOpts = [
+        "",
+        "TDs",
+        "Points",
+        "Receptions",
+        "Yards"
+    ];
+
+    const arr = [];
+    for(let i=0; i<=1200; i++) {
+        arr.push(i);
+    }
+    const numberVals = arr.map(n => n/2);
+    const yardOpts = ["", ...numberVals];
     const spreadSignOpts = ["","+","-"];
-    const spreadOpts = ["", ...Array(101).keys()];
+    const tdScorerOpts1 = ["","First","Anytime",...numberVals];
+    const tdScorerOpts2 = ["","Anytime",...numberVals];
+    const receptionOpts = ["","First",...numberVals];
+    const spreadOpts = ["",...numberVals];
+
+    useEffect(()=>{
+        if(token === null){
+            navigate("/");
+            return;
+        }
+    });
 
     const handleAdd=()=>{
         if(betSlip.every(bet => bet.betSlipValidated)){
             const newBetSlip = [...betSlip,
             {
-                subject: "",
+                subject: "Team",
                 subjectName:"",
                 selectedBetOption1: "",
                 selectedBetOption2: "",
@@ -70,17 +99,15 @@ function CreateBet() {
             updatedBetSlip[index] = {...updatedBetSlip[index], 
                 selectedBetOption1: "",
                 selectedBetOption2: "",
-                selectedSpreadSign: "",
-                selectedSpreadValue: "",
-                betSlipValidated: true
+                selectedSpreadSig3: "",
+                betSlipValidated: false
                 }
         }
         if(e.target.id==="selectedBetOption1"){
             updatedBetSlip[index] = {...updatedBetSlip[index], 
                 selectedBetOption2: "",
-                selectedSpreadSign: "",
-                selectedSpreadValue: "",
-                betSlipValidated: true
+                selectedBetOption3: "",
+                betSlipValidated: false
                 }
         }
         updatedBetSlip[index][e.target.id] = e.target.value;
@@ -93,19 +120,47 @@ function CreateBet() {
             if(bet.selectedBetOption1==="Moneyline"){
                 return true;
             }
-            if(bet.selectedBetOption1==="Spread" 
-            && bet.selectedSpreadSign 
-            && bet.selectedSpreadValue){
+            if((bet.selectedBetOption1==="Spread" 
+            || bet.selectedBetOption1 === "Over"
+            || bet.selectedBetOption1 === "Under")
+            && bet.selectedBetOption2 
+            && bet.selectedBetOption3){
                 return true;
             }
         }
         if(bet.subject==="Player" 
-        && bet.subjectName
-        && bet.selectedBetOption1
-        && bet.selectedBetOption2){
-            return true;
+        && bet.subjectName){
+            if(bet.selectedBetOption1 === "Over"
+                || bet.selectedBetOption1 === "Under"){
+                if(bet.selectedBetOption2 && bet.selectedBetOption3){
+                    return true;
+                }
+            }
+            else if(bet.selectedBetOption1
+                && bet.selectedBetOption2){
+                    return true;
+                }
         }
         return false;
+    }
+
+    const formatBets = () => {
+        const myBets = [];
+        betSlip.forEach((bet, i)=>{
+            var betStr = bet.subjectName + " " + bet.selectedBetOption1;
+            if(bet.selectedBetOption2){
+                betStr = betStr + " " + bet.selectedBetOption2;
+            }
+            if(bet.selectedBetOption3){
+                if(bet.selectedBetOption1 === "Spread"){
+                    betStr = betStr + bet.selectedBetOption3;
+                }else{
+                    betStr = betStr + " " + bet.selectedBetOption3;
+                }
+            }
+            myBets[i] = betStr;
+        });
+        return myBets;
     }
 
     const placeBet = async () => {
@@ -115,17 +170,7 @@ function CreateBet() {
                 Authorization: `Bearer ${userData.data.token}`,
             },
             };
-            const myBets = [];
-            betSlip.forEach((bet, i)=>{
-                var betStr = bet.subjectName + " " + bet.selectedBetOption1;
-                if(bet.selectedBetOption2)
-                    betStr = betStr + " " + bet.selectedBetOption2;
-                if(bet.selectedSpreadSign)
-                    betStr = betStr + " " + bet.selectedSpreadSign;
-                if(bet.selectedSpreadValue)
-                    betStr = betStr + " " + bet.selectedSpreadValue;
-                myBets[i] = betStr;
-            });
+            const myBets = formatBets();
             await axios.post("http://localhost:8080/bets",
                 {
                 title: "",
@@ -177,7 +222,7 @@ function CreateBet() {
                                 ))}
                             </select>
 
-                            {(bet.subject === "Team" || bet.subject === "Player") && 
+                            {(bet.subject === "Team" || bet.subject === "Player" || bet.subject === "Game") && 
                             <input className="search-box"
                                 id="subjectName"
                                 placeholder={bet.subject+" Name"}
@@ -195,9 +240,20 @@ function CreateBet() {
                                 ))}
                             </select>}
 
+                            {bet.subject === "Player"
+                            && <select id="selectedBetOption1" name="selectedBetOption1" className="custom-select"
+                                value={bet.selectedBetOption1} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {playerBetOptions.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
+
                             {(bet.subject === "Team" && bet.selectedBetOption1 === "Spread") 
-                            && <select id="selectedSpreadSign" name="selectedSpreadSign" className="custom-select"
-                                value={bet.selectedSpreadSign} 
+                            && <select id="selectedBetOption2" name="selectedBetOption2" className="custom-select"
+                                value={bet.selectedBetOption2} 
                                 onChange={(e)=>updateBetSlip(i, e)}>
                                 {spreadSignOpts.map(option => (
                                     <option key={option} value={option}>
@@ -207,8 +263,8 @@ function CreateBet() {
                             </select>}
 
                             {(bet.subject === "Team" && bet.selectedBetOption1 === "Spread") 
-                            && <select id="selectedSpreadValue" name="selectedSpreadValue" className="custom-select"
-                                value={bet.selectedSpreadValue} 
+                            && <select id="selectedBetOption3" name="selectedBetOption3" className="custom-select"
+                                value={bet.selectedBetOption3} 
                                 onChange={(e)=>updateBetSlip(i, e)}>
                                 {spreadOpts.map(option => (
                                     <option key={option} value={option}>
@@ -217,11 +273,26 @@ function CreateBet() {
                                 ))}
                             </select>}
 
-                            {bet.subject === "Player"
-                            && <select id="selectedBetOption1" name="selectedBetOption1" className="custom-select"
-                                value={bet.selectedBetOption1} 
+                            {(bet.subject === "Team"
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption2" name="selectedBetOption2" className="custom-select"
+                                value={bet.selectedBetOption2} 
                                 onChange={(e)=>updateBetSlip(i, e)}>
-                                {playerBetOptions.map(option => (
+                                {yardOpts.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
+
+                            {(bet.subject === "Team"
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption3" name="selectedBetOption3" className="custom-select"
+                                value={bet.selectedBetOption3} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {gameOverUnderOpts.map(option => (
                                     <option key={option} value={option}>
                                         {option}
                                     </option>
@@ -255,11 +326,38 @@ function CreateBet() {
                             {(bet.subject === "Player" 
                             && (bet.selectedBetOption1 === "Rec Yards" 
                             || bet.selectedBetOption1 === "Pass Yards" 
-                            || bet.selectedBetOption1 === "Rush Yards")) 
+                            || bet.selectedBetOption1 === "Rush Yards"
+                            || bet.selectedBetOption1 === "Alt Yards")) 
                             && <select id="selectedBetOption2" name="selectedBetOption2" className="custom-select"
                                 value={bet.selectedBetOption2} 
                                 onChange={(e)=>updateBetSlip(i, e)}>
                                 {yardOpts.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
+
+                            {(bet.subject === "Player" 
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption2" name="selectedBetOption2" className="custom-select"
+                                value={bet.selectedBetOption2} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {yardOpts.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
+
+                            {(bet.subject === "Player" 
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption3" name="selectedBetOption3" className="custom-select"
+                                value={bet.selectedBetOption3} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {playerOverUnderOpts.map(option => (
                                     <option key={option} value={option}>
                                         {option}
                                     </option>
@@ -277,31 +375,36 @@ function CreateBet() {
                                     </option>
                                 ))}
                             </select>}
+                            
+                            {(bet.subject === "Game" 
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption2" name="selectedBetOption2" className="custom-select"
+                                value={bet.selectedBetOption2} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {yardOpts.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
 
-                            {bet.subject === "Player" && bet.subjectName 
-                            && bet.selectedBetOption1 && bet.selectedBetOption2 
-                            &&
-                            // <IconButton
-                            //     onClick={() => {
-                            //         enterSubjectName();
-                            //     }}
-                            // >
-                                <DoneOutlineRoundedIcon/>
-                            //</IconButton>
-                            }
+                            {(bet.subject === "Game" 
+                            && (bet.selectedBetOption1 === "Over" 
+                            || bet.selectedBetOption1 === "Under" )) 
+                            && <select id="selectedBetOption3" name="selectedBetOption3" className="custom-select"
+                                value={bet.selectedBetOption3} 
+                                onChange={(e)=>updateBetSlip(i, e)}>
+                                {gameOverUnderOpts.map(option => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>}
 
-                            {bet.subject === "Team" && bet.subjectName
-                            && (bet.selectedBetOption1 === "Moneyline"|| (bet.selectedBetOption1 === "Spread" 
-                            && bet.selectedSpreadSign && bet.selectedSpreadValue))
-                            &&
-                            // <IconButton
-                            //     onClick={() => {
-                            //         enterSubjectName();
-                            //     }}
-                            // >
-                                <DoneOutlineRoundedIcon/>
-                            //</div></IconButton>
-                            }
+                            {bet.betSlipValidated &&
+                            <DoneOutlineRoundedIcon/>}
+
                             {i > 0 &&
                             <IconButton
                                 onClick={()=>handleDelete(i)}

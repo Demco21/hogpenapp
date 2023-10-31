@@ -22,7 +22,6 @@ function Login() {
 
     const loginHandler = async (e) => {
         setLoading(true);
-        console.log(data);
         try{
             const config = {
                 headers: {
@@ -35,7 +34,6 @@ function Login() {
                 data,
                 config
             );
-            console.log("Login: ", response);
             setLogInStatus({msg: "Success", key: Math.random()});
             localStorage.setItem("userData", JSON.stringify(response));
             navigate("/app/welcome");
@@ -64,7 +62,6 @@ function Login() {
                 data,
                 config
             );
-            console.log("Login: ", response);
             setSignInStatus({msg: "Success", key: Math.random()});
             setLoading(false);
             localStorage.setItem("userData", JSON.stringify(response));

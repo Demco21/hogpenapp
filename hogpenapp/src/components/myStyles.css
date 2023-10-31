@@ -91,6 +91,7 @@
 }
 
 .search-box {
+    width: 150px;
     outline-width: 0;
     outline: none;
     border: none;

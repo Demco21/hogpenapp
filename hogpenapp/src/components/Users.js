@@ -11,23 +11,24 @@ function Users() {
     const [refresh, setRefresh] = useState(true);
     const [users, setUsers] = useState([]);
     const userData = JSON.parse(localStorage.getItem("userData"));
-    const nav = useNavigate();
-    if(!userData){
-        console.log("User not authenticated");
-        nav("/");
-    }
+    const token = userData ? userData.data.token : null;
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if(token === null){
+            navigate("/");
+            return;
+        }
         const config = {
             headers: {
-                Authorization: `Bearer ${userData.data.token}`
+                Authorization: `Bearer ${token}`
             }
         };
         axios.get("http://localhost:8080/user/fetchUsers", config).then((data) => {
             console.log("User data from API");
             setUsers(data.data);
         });
-    }, [refresh, userData.data.token]);
+    }, [refresh, navigate, token]);
 
     return (
         <div className="list-container">
