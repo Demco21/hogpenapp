@@ -17,6 +17,7 @@ app.use(express.json());
 app.use(cors({
     origin: 'http://18.232.117.100/'
 }));
+console.log("Server is using CORS");
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
