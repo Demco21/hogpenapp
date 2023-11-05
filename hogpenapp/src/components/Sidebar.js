@@ -109,9 +109,9 @@ function Sidebar() {
                   {friend.name}
                 </p>
 
-                <p className="convo-lastMessage">
+                {/* <p className="convo-lastMessage">
                 Click here to see bets made by {friend.name}
-                </p>
+                </p> */}
               </div>
             );
         })}

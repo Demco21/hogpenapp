@@ -193,7 +193,7 @@ function CreateBet() {
             <div className="ug-header">
                 <p className="ug-title">Create a Bet</p>
             </div>
-            <div className="messages-container">
+            <div className="create-bet-container">
                 <div className="bet-title">
                 Wager:
                     <input className="search-box"

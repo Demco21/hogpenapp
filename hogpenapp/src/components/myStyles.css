@@ -7,7 +7,7 @@
 }
 
 .Sidebar{
-    flex: 0.3;
+    flex: 0.25;
     display: flex;
     flex-direction: column;
     /* border: 5px solid black; */
@@ -236,7 +236,7 @@
     color: rgba(0, 0, 0, 0.54);
     text-transform: capitalize;
     text-align: center;
-    padding: 5px;
+    padding:5px;
 }
 
 .bet-text{
@@ -266,7 +266,19 @@
     margin: 10px;
     border-radius: 20px;
     flex: 1;
-    overflow: scroll;
+    overflow: auto;
+    display: flex;
+    flex-direction: column-reverse;
+    scrollbar-width: none;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+.create-bet-container{
+    background-color: white;
+    padding: 10px 10px;
+    margin: 10px;
+    border-radius: 20px;
+    flex: 1;
     scrollbar-width: none;
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
@@ -339,7 +351,7 @@
 }
 
 .welcome-container{
-    flex: 0.7;
+    flex: 0.75;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -361,14 +373,14 @@
 }
 
 .image-container{
-    flex: 0.3;
+    flex: 0.25;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .login-box{
-    flex: 0.7;
+    flex: 0.75;
     background-color: white;
     border-radius: 20px;
     margin: 10px;
@@ -388,7 +400,7 @@
 }
 
 .list-container{
-    flex: 0.7;
+    flex: 0.75;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -485,9 +497,6 @@ select {
         justify-content: center;
     }
     .sidebar-search{
-        display: none;
-    }
-    .sidebar-conversations{
         display: none;
     }
     .Sidebar{
