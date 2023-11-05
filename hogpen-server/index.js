@@ -4,6 +4,13 @@ const { default: mongoose } = require("mongoose");
 //const cors = require("cors");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
+const path = require('path');
+
+const _dirname = path.dirname("");
+const buildPath = path.join(_dirname, "../hogpenapp/build");
+
+app.use(express.static(buildPath));
+
 dotenv.config();
 app.use(express.json());
 
@@ -12,6 +19,8 @@ const MONGO_URI = process.env.MONGO_URI;
 
 const userRoutes = require("./routes/userRoutes");
 const betRoutes = require("./routes/betRoutes");
+app.use("/user", userRoutes);
+app.use("/bets", betRoutes);
 
 const connectDb = async() => {
     try{
@@ -23,11 +32,17 @@ const connectDb = async() => {
 }
 connectDb();
 
-app.get("/", (req, res)=>{
+app.get("/*", (req, res)=>{
+    res.sendFile(
+        path.join(_dirname, "../hogpenapp/build/index.html"),
+        function(err){
+            if(err){
+                res.status(500).send(err);
+            }
+        }
+    )
     res.send("API is running");
 });
-app.use("/user", userRoutes);
-app.use("/bets", betRoutes);
 
 
 app.listen(PORT, console.log("Server is running on port ", PORT));
