@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const { default: mongoose } = require("mongoose");
-//const cors = require("cors");
+const cors = require("cors");
 const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const app = express();
 const path = require('path');
@@ -13,6 +13,10 @@ app.use(express.static(buildPath));
 
 dotenv.config();
 app.use(express.json());
+
+app.use(cors({
+    origin: 'http://18.232.117.100/'
+}));
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
