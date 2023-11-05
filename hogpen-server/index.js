@@ -15,7 +15,7 @@ dotenv.config();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'http://18.232.117.100/'
+    origin: 'http://localhost:8080/'
 }));
 console.log("Server is using CORS");
 
