@@ -24,8 +24,7 @@ const betModel = mongoose.Schema({
         required: true
     },
     isWin: {
-        type: Boolean,
-        required: true
+        type: Boolean
     },
     createdAt: {
         type: Date,
