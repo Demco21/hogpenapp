@@ -28,7 +28,7 @@ function Bets() {
           Authorization: `Bearer ${token}`
         }
       };
-      axios.get("http://localhost:8080/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
+      axios.get("http://localhost:5000/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
         setBets(data.data);
       });
     }else{
@@ -38,7 +38,7 @@ function Bets() {
             Authorization: `Bearer ${token}`
         }
       };
-      axios.get("http://localhost:8080/bets/fetchBets", config).then((data) => {
+      axios.get("http://localhost:5000/bets/fetchBets", config).then((data) => {
         setBets(data.data);
       });
     }
