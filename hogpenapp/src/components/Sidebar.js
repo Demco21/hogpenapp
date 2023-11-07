@@ -32,7 +32,7 @@ function Sidebar() {
         },
       };
   
-      axios.get("http://localhost:5000/user/fetchUsers", config).then((response) => {
+      axios.get("https://hogpenbets.com/user/fetchUsers", config).then((response) => {
         setFriendsList(response.data);
       });
     }, [refresh, navigate, token]);
