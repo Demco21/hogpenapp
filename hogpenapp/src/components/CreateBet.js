@@ -171,7 +171,7 @@ function CreateBet() {
             },
             };
             const myBets = formatBets();
-            await axios.post("http://localhost:8080/bets",
+            await axios.post("http://localhost:5000/bets",
                 {
                 title: "",
                 bets: myBets,

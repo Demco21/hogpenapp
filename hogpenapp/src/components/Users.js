@@ -24,7 +24,7 @@ function Users() {
                 Authorization: `Bearer ${token}`
             }
         };
-        axios.get("http://localhost:8080/user/fetchUsers", config).then((data) => {
+        axios.get("http://localhost:5000/user/fetchUsers", config).then((data) => {
             console.log("User data from API");
             setUsers(data.data);
         });
