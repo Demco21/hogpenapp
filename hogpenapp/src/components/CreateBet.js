@@ -171,7 +171,7 @@ function CreateBet() {
             },
             };
             const myBets = formatBets();
-            await axios.post("http://localhost:5000/bets",
+            await axios.post("https://hogpenbets.com/bets",
                 {
                 title: "",
                 bets: myBets,
