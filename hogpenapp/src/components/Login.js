@@ -7,13 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import Toaster from "./Toaster"
 
 function Login() {
+    const domain = process.env.REACT_APP_DOMAIN;
     const [showlogin, setShowLogin] = useState(true);
     const [data, setData] = useState({name: "", email: "", password: ""});
     const [loading, setLoading] = useState(false);
-
     const [logInStatus, setLogInStatus] = React.useState("");
     const [signInStatus, setSignInStatus] = React.useState("");
-
     const navigate = useNavigate();
 
     const changeHandler = (e) => {
@@ -30,7 +29,7 @@ function Login() {
             };
 
             const response = await axios.post(
-                "https://hogpenbets.com/user/login/",
+                domain + "/user/login/",
                 data,
                 config
             );
@@ -58,7 +57,7 @@ function Login() {
             };
 
             const response = await axios.post(
-                "https://hogpenbets.com/user/register/",
+                domain + "/user/register/",
                 data,
                 config
             );
@@ -119,6 +118,11 @@ function Login() {
                         variant="outlined" 
                         color="secondary"
                         name="name"
+                        onKeyDown={(e) => {
+                            if(e.key === "Enter"){
+                                {loginHandler()}
+                            }
+                        }}
                     />
                     <TextField 
                         onChange={changeHandler}
@@ -128,6 +132,11 @@ function Login() {
                         autoComplete="current-password"
                         color="secondary"
                         name="password"
+                        onKeyDown={(e) => {
+                            if(e.key === "Enter"){
+                                {loginHandler()}
+                            }
+                        }}
                     />
                     <Button 
                         variant="outlined" 

@@ -7,8 +7,10 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { useNavigate } from 'react-router-dom';
+import Toaster from "./Toaster"
 
 function CreateBet() {
+    const domain = process.env.REACT_APP_DOMAIN;
     const navigate = useNavigate();
     const userData = JSON.parse(localStorage.getItem("userData"));
     const token = userData ? userData.data.token : null;
@@ -22,6 +24,7 @@ function CreateBet() {
     }]);
     const [wager, setWager] = useState(0);
     const [payout, setPayout] = useState(0);
+    const [toasterMsg, setToasterMsg] = useState('');
     const subjectOptions = ["Team", "Player"];
     const teamBetOptions = ["", "Moneyline", "Spread", "Over", "Under"];
     const playerBetOptions = [
@@ -72,6 +75,7 @@ function CreateBet() {
 
     const handleAdd=()=>{
         if(betSlip.every(bet => bet.betSlipValidated)){
+            setToasterMsg('')
             const newBetSlip = [...betSlip,
             {
                 subject: "Team",
@@ -84,16 +88,23 @@ function CreateBet() {
             }
             ];
             setBetSlip(newBetSlip);
+        }else{
+            if(toasterMsg)
+                setToasterMsg('')
+            else
+                setToasterMsg('Missing required fields in last bet');
         }
     };
 
     const handleDelete=(i)=>{
+        setToasterMsg('')
         const newBetSlip = [...betSlip];
         newBetSlip.splice(i, 1);
         setBetSlip(newBetSlip);
     };
 
     const updateBetSlip=(index, e)=>{
+        setToasterMsg('')
         const updatedBetSlip = [...betSlip];
         if(e.target.id==="subject"){
             updatedBetSlip[index] = {...updatedBetSlip[index], 
@@ -171,7 +182,7 @@ function CreateBet() {
             },
             };
             const myBets = formatBets();
-            await axios.post("https://hogpenbets.com/bets",
+            await axios.post(domain + "/bets",
                 {
                 title: "",
                 bets: myBets,
@@ -185,11 +196,23 @@ function CreateBet() {
                 console.log("Message Fired");
             });
             navigate('/app/bets');
+        }else{
+            if(toasterMsg)
+                setToasterMsg('')
+            else{
+                if(!betSlip.every(bet => bet.betSlipValidated))
+                    setToasterMsg('Missing required fields in last bet');
+                else if(!wager || !payout)
+                    setToasterMsg('Must place a wager and payout');
+            }
         }
     };
 
     return (
         <div className="list-container">
+            {toasterMsg ? (
+                        <Toaster key={Math.random()} message={toasterMsg} />
+                    ) : null}
             <div className="ug-header">
                 <p className="ug-title">Create a Bet</p>
             </div>

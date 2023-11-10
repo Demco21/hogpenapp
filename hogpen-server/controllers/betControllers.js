@@ -30,12 +30,13 @@ const placeBet = expressAsyncHandler(async (req, res) => {
   });
 
   const fetchAllBets = expressAsyncHandler (async (req, res) => {
-    const bets = await Bet.find().populate("user", "-password");
+    const bets = await Bet.find({}).sort({createdAt : -1})
+    .populate("user", "-password");
     res.send(bets);
   });
 
   const fetchBetsById = expressAsyncHandler (async (req, res) => {
-    const bets = await Bet.find({ user: req.params.userId })
+    const bets = await Bet.find({ user: req.params.userId }).sort({createdAt : -1})
     .populate("user", "-password");
     res.send(bets);
   });

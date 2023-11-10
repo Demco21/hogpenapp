@@ -4,6 +4,7 @@ import axios from "axios";
 import { useSearchParams, useLocation, useNavigate } from "react-router-dom";
 
 function Bets() {
+  const domain = process.env.REACT_APP_DOMAIN;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams({});
   const userData = JSON.parse(localStorage.getItem("userData"));
@@ -28,7 +29,7 @@ function Bets() {
           Authorization: `Bearer ${token}`
         }
       };
-      axios.get("https://hogpenbets.com/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
+      axios.get(domain + "/bets/fetchBetsById/"+searchParams.get("user"), config).then((data) => {
         setBets(data.data);
       });
     }else{
@@ -38,7 +39,8 @@ function Bets() {
             Authorization: `Bearer ${token}`
         }
       };
-      axios.get("https://hogpenbets.com/bets/fetchBets", config).then((data) => {
+      axios.get(domain + "/bets/fetchBets", config).then((data) => {
+        console.log(data.data);
         setBets(data.data);
       });
     }
