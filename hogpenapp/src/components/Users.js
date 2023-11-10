@@ -8,6 +8,7 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 
 function Users() {
+    const domain = process.env.REACT_APP_DOMAIN;
     const [refresh, setRefresh] = useState(true);
     const [users, setUsers] = useState([]);
     const userData = JSON.parse(localStorage.getItem("userData"));
@@ -24,7 +25,7 @@ function Users() {
                 Authorization: `Bearer ${token}`
             }
         };
-        axios.get("https://hogpenbets.com/user/fetchUsers", config).then((data) => {
+        axios.get(domain + "/user/fetchUsers", config).then((data) => {
             console.log("User data from API");
             setUsers(data.data);
         });

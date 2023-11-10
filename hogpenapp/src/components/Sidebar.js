@@ -13,34 +13,35 @@ import MenuIcon from '@mui/icons-material/Menu';
 import logo from "../Images/hoghunter.png"
 
 function Sidebar() {
-    const navigate = useNavigate();
-    const { refresh } = useContext(myContext);
-    const [dropdown, setDropdown] = useState(false);
-    const [friendsList, setFriendsList] = useState([]);
-    const userData = JSON.parse(localStorage.getItem("userData"));
-    const token = userData ? userData.data.token : null;
+  const domain = process.env.REACT_APP_DOMAIN;
+  const navigate = useNavigate();
+  const { refresh } = useContext(myContext);
+  const [dropdown, setDropdown] = useState(false);
+  const [friendsList, setFriendsList] = useState([]);
+  const userData = JSON.parse(localStorage.getItem("userData"));
+  const token = userData ? userData.data.token : null;
 
-    useEffect(() => {
-      if (token === null) {
-        navigate("/");
-        return;
-      }
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-  
-      axios.get("https://hogpenbets.com/user/fetchUsers", config).then((response) => {
-        setFriendsList(response.data);
-      });
-    }, [refresh, navigate, token]);
-
-    const logOut=(() => {
-      localStorage.clear();
+  useEffect(() => {
+    if (token === null) {
       navigate("/");
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    axios.get(domain + "/user/fetchUsers", config).then((response) => {
+      setFriendsList(response.data);
     });
+  }, [refresh, navigate, token]);
+
+  const logOut=(() => {
+    localStorage.clear();
+    navigate("/");
+  });
     
   return (
     <div className="Sidebar">
